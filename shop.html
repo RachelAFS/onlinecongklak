@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shop</title>
+
+  <!-- FONT -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- ICONS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Baloo 2', cursive;
+      background: linear-gradient(135deg,#fff4a8,#f2a6ff);
+      min-height: 100vh;
+      padding: 25px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    /* =========================
+       TOP BAR
+    ========================= */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      background: white;
+      padding: 15px 25px;
+      border-radius: 25px;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+    }
+
+    .logo h1 {
+      color: #d84e81;
+      font-size: 2rem;
+    }
+
+    .coins-box {
+      background: white;
+      border-radius: 50px;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.08);
+    }
+
+    .coins-box i {
+      color: gold;
+      font-size: 1.8rem;
+    }
+
+    .coins-box span {
+      font-size: 1.5rem;
+      color: #d86d8f;
+      font-weight: 700;
+    }
+
+    .add-coins-btn {
+      background: #d84e81;
+      color: white;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: transform 0.2s, background 0.2s;
+      margin-left: 4px;
+    }
+
+    .add-coins-btn:hover {
+      transform: scale(1.15);
+      background: #b83765;
+    }
+
+    /* =========================
+       SHOP SECTIONS
+    ========================= */
+    .shop-section {
+      background: #f7f3f3;
+      border-radius: 40px;
+      padding: 30px;
+      margin-bottom: 25px;
+      box-shadow: 0 12px 22px rgba(0,0,0,0.08);
+    }
+
+    .shop-title {
+      color: #d84e81;
+      font-size: 3rem;
+      margin-bottom: 25px;
+    }
+
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+      gap: 25px;
+    }
+
+    .item-card {
+      background: #ffe7ba;
+      border-radius: 30px;
+      padding: 25px;
+      text-align: center;
+      transition: 0.25s;
+    }
+
+    .item-card.coin-pack {
+      background: #fff3c3;
+      border: 2px dashed #fcd060;
+    }
+
+    .item-card:hover {
+      transform: translateY(-6px);
+    }
+
+    .item-icon {
+      width: 120px;
+      height: 120px;
+      margin: auto;
+      margin-bottom: 20px;
+      border-radius: 30px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.08);
+    }
+
+    .item-icon i {
+      font-size: 4rem;
+      color: #d86d8f;
+    }
+
+    .item-card h3 {
+      color: #cf704d;
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .price {
+      color: #b84cff;
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    .price.emoney {
+      color: #27ae60;
+    }
+
+    .buy-btn {
+      border: none;
+      outline: none;
+      background: linear-gradient(90deg,#95aef9,#ee95f5);
+      color: white;
+      width: 100%;
+      padding: 14px;
+      border-radius: 18px;
+      font-size: 1.2rem;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.25s;
+    }
+
+    .buy-btn:hover {
+      transform: scale(1.04);
+    }
+
+    .buy-btn.equipped {
+      background: #2ec4b6 !important;
+    }
+    .buy-btn.owned-inactive {
+      background: #ff9f1c !important;
+    }
+
+    .buy-btn.coin-btn {
+      background: linear-gradient(90deg, #ff9f1c, #ffbf69);
+    }
+
+    /* =========================
+       SIMULATED MODAL GATEWAY OVERLAY
+    ========================= */
+    .payment-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 3000;
+    }
+
+    .payment-modal {
+      background: white;
+      border-radius: 35px;
+      width: 90%;
+      max-width: 400px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+      animation: pageLoad 0.3s ease;
+    }
+
+    .payment-modal h2 {
+      color: #2c3e50;
+      font-size: 1.8rem;
+      margin-bottom: 5px;
+    }
+
+    .payment-modal p {
+      color: #7f8c8d;
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+
+    .qris-container {
+      background: #f9f9f9;
+      border: 2px dashed #bdc3c7;
+      border-radius: 20px;
+      padding: 15px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .qris-badge {
+      background: #1e3799;
+      color: white;
+      font-weight: bold;
+      padding: 4px 20px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .qr-box {
+      width: 160px;
+      height: 160px;
+      background: #333;
+      border: 6px solid white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .qr-box::before {
+      content: '';
+      position: absolute;
+      width: 130px; height: 130px;
+      background: repeating-linear-gradient(45deg, #333, #333 4px, #fff 4px, #fff 8px);
+      opacity: 0.15;
+      top: 9px; left: 9px;
+    }
+
+    .qr-nested-marker {
+      position: absolute;
+      width: 35px; height: 35px;
+      border: 6px solid #333;
+      background: white;
+    }
+
+    .provider-tags {
+      display: flex;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .provider-tags span {
+      background: #eef1f4;
+      font-size: 0.75rem;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 5px;
+      color: #7f8c8d;
+    }
+
+    .invoice-block {
+      background: #fff9e6;
+      border-left: 5px solid #ffc107;
+      padding: 12px 16px;
+      border-radius: 12px;
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .invoice-block div {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1rem;
+      color: #5d4037;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-cancel {
+      flex: 1;
+      background: #95a5a6;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: inherit;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-confirm {
+      flex: 2;
+      background: #2ecc71;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: inherit;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+    }
+
+    /* =========================
+       MESSAGE
+    ========================= */
+    .message {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #d84e81;
+      font-size: 1.3rem;
+      font-weight: bold;
+      min-height: 30px;
+    }
+
+    /* =========================
+       NAVIGATION
+    ========================= */
+    .bottom-nav {
+      margin-top: 25px;
+      background: linear-gradient(90deg,#9db5f8,#eea6f5);
+      border-radius: 30px;
+      padding: 20px;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #8e168b;
+      cursor: pointer;
+      text-decoration: none;
+      position: relative;
+      transition: 0.2s ease;
+    }
+
+    .nav-item i { font-size: 2rem; }
+    .nav-item span { font-size: 1.2rem; }
+    .active { color: white; }
+
+    .nav-item.active {
+      color: white;
+      transform: translateY(-3px);
+    }
+
+    .nav-item.active::before {
+      content: "";
+      position: absolute;
+      bottom: -8px;
+      width: 40px;
+      height: 6px;
+      background: white;
+      border-radius: 10px;
+      filter: blur(2px);
+    }
+
+    .nav-item span { pointer-events: none; }
+
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.6);
+      transform: scale(0);
+      animation: rippleAnim 0.6s linear;
+    }
+
+    @keyframes rippleAnim {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    @media(max-width:768px){
+      body{ padding: 15px; animation: pageLoad 0.4s ease; }
+      .shop-section{ padding: 20px; }
+      .shop-title{ font-size: 2.3rem; }
+      .item-card h3{ font-size: 1.6rem; }
+      .item-icon{ width: 100px; height: 100px; }
+      .item-icon i{ font-size: 3rem; }
+    }
+
+    @keyframes pageLoad {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- TOP BAR -->
+  <header class="top-bar">
+    <div class="logo">
+      <h1>🛍️ Kawaii Shop</h1>
+    </div>
+    <div class="coins-box">
+      <i class="fa-solid fa-coins"></i>
+      <span id="coinText">0</span>
+      <button class="add-coins-btn" onclick="document.getElementById('coin-bundle-section').scrollIntoView({behavior: 'smooth'})" title="Buy Coins Bundle">
+        <i class="fa-solid fa-plus" style="font-size: 0.75rem; color: white;"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- MESSAGE BAR -->
+  <div class="message" id="message"></div>
+
+  <!-- SECTION 1: COINS TOP-UP BUNDLES -->
+  <section class="shop-section" id="coin-bundle-section">
+    <h2 class="shop-title">Buy Coins</h2>
+    <div class="items-grid">
+
+      <!-- Bundle 1 -->
+      <div class="item-card coin-pack">
+        <div class="item-icon">
+          <i class="fa-solid fa-coins" style="color: #cd7f32;"></i>
+        </div>
+        <h3>1.000 Coins</h3>
+        <div class="price emoney">Rp 500</div>
+        <button class="buy-btn coin-btn" onclick="openEPayGateway(1000, 500)">Buy Bundle</button>
+      </div>
+
+      <!-- Bundle 2 -->
+      <div class="item-card coin-pack">
+        <div class="item-icon">
+          <i class="fa-solid fa-coins" style="color: #c0c0c0;"></i>
+        </div>
+        <h3>5.000 Coins</h3>
+        <div class="price emoney">Rp 2.500</div>
+        <button class="buy-btn coin-btn" onclick="openEPayGateway(5000, 2500)">Buy Bundle</button>
+      </div>
+
+      <!-- Bundle 3 -->
+      <div class="item-card coin-pack">
+        <div class="item-icon">
+          <i class="fa-solid fa-coins" style="color: gold;"></i>
+        </div>
+        <h3>12.000 Coins</h3>
+        <div class="price emoney">Rp 5.000</div>
+        <button class="buy-btn coin-btn" onclick="openEPayGateway(12000, 5000)">Buy Bundle</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 2: BEANS -->
+  <section class="shop-section">
+    <h2 class="shop-title">Beans</h2>
+    <div class="items-grid">
+
+      <div class="item-card">
+        <div class="item-icon">
+          <i class="fa-solid fa-circle" style="color: #4a4a4a;"></i>
+        </div>
+        <h3>Default Bean</h3>
+        <div class="price">Free</div>
+        <button class="buy-btn" data-type="bean" data-name="Default Bean" data-price="0">Equip</button>
+      </div>
+
+      <div class="item-card">
+        <div class="item-icon">
+          <i class="fa-solid fa-apple-whole" style="color:#ff5e62;"></i>
+        </div>
+        <h3>Apple Bean</h3>
+        <div class="price">🪙 200</div>
+        <button class="buy-btn" data-type="bean" data-name="Apple Bean" data-price="200">Buy Item</button>
+      </div>
+
+      <div class="item-card">
+        <div class="item-icon">
+          <i class="fa-solid fa-cat" style="color:#ffa6c9;"></i>
+        </div>
+        <h3>Cat Bean</h3>
+        <div class="price">🪙 400</div>
+        <button class="buy-btn" data-type="bean" data-name="Cat Bean" data-price="400">Buy Item</button>
+      </div>
+
+      <div class="item-card">
+        <div class="item-icon">
+          <i class="fa-solid fa-lemon" style="color:#5bc0be;"></i>
+        </div>
+        <h3>Blue Bean</h3>
+        <div class="price">🪙 200</div>
+        <button class="buy-btn" data-type="bean" data-name="Blue Bean" data-price="200">Buy Item</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 3: BOARDS -->
+  <section class="shop-section">
+    <h2 class="shop-title">Boards</h2>
+    <div class="items-grid">
+
+      <div class="item-card">
+        <div class="item-icon">
+          <div style="width:50px; height:20px; background:#ffe5b4; border-radius:5px; border:2px solid #cf704d;"></div>
+        </div>
+        <h3>Classic Board</h3>
+        <div class="price">Free</div>
+        <button class="buy-btn" data-type="board" data-name="Classic Board" data-price="0">Equip</button>
+      </div>
+
+      <div class="item-card">
+        <div class="item-icon">
+          <i class="fa-solid fa-cookie" style="color:#b5835a;"></i>
+        </div>
+        <h3>Cookie Board</h3>
+        <div class="price">🪙 400</div>
+        <button class="buy-btn" data-type="board" data-name="Cookie Board" data-price="400">Buy Item</button>
+      </div>
+
+      <div class="item-card">
+        <div class="item-icon">
+          <i class="fa-solid fa-wand-magic-sparkles" style="color:#b84cff;"></i>
+        </div>
+        <h3>Magic Board</h3>
+        <div class="price">🪙 600</div>
+        <button class="buy-btn" data-type="board" data-name="Magic Board" data-price="600">Buy Item</button>
+      </div>
+
+      <div class="item-card">
+        <div class="item-icon">
+          <i class="fa-solid fa-meteor" style="color:#7f8c8d;"></i>
+        </div>
+        <h3>Stone Board</h3>
+        <div class="price">🪙 400</div>
+        <button class="buy-btn" data-type="board" data-name="Stone Board" data-price="400">Buy Item</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- NAVIGATION -->
+  <nav class="bottom-nav">
+    <a href="home page.html" class="nav-item">
+      <i class="fa-solid fa-house"></i>
+      <span>Home</span>
+    </a>
+    <a href="index.html" class="nav-item">
+      <i class="fa-solid fa-compass"></i>
+      <span>Adventure</span>
+    </a>
+    <a href="shop.html" class="nav-item">
+      <i class="fa-solid fa-store"></i>
+      <span>Shop</span>
+    </a>
+    <a href="credits.html" class="nav-item">
+      <i class="fa-solid fa-users"></i>
+      <span>Credits</span>
+    </a>
+  </nav>
+
+</div>
+
+<!-- INTERACTIVE MODAL COMPONENT (QRIS Simulation Overlay) -->
+<div id="paymentOverlay" class="payment-overlay">
+  <div class="payment-modal">
+    <h2>E-Money Top-Up</h2>
+    <p>Scan code with GoPay, ShopeePay, OVO, or Dana</p>
+
+    <div class="qris-container">
+      <div class="qris-badge">QRIS</div>
+      <div class="qr-box">
+        <div class="qr-nested-marker" style="top:4px; left:4px;"></div>
+        <div class="qr-nested-marker" style="top:4px; right:4px;"></div>
+        <div class="qr-nested-marker" style="bottom:4px; left:4px;"></div>
+      </div>
+      <div class="provider-tags">
+        <span>GOPAY</span><span>DANA</span><span>OVO</span><span>SPAY</span>
+      </div>
+    </div>
+
+    <div class="invoice-block">
+      <div><strong>Item:</strong> <span id="modalProductName">0 Coins</span></div>
+      <div style="margin-top: 4px;"><strong>Price:</strong> <span id="modalProductPrice" style="color:#27ae60; font-weight:bold;">Rp 0</span></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeEPayGateway()">Cancel</button>
+      <button class="btn-confirm" onclick="triggerMockPaymentSuccess()">Simulate Paid</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== SECURITY GATEKEEPER & PREFIX ====================
+if (sessionStorage.getItem("isLoggedIn") !== "true") {
+  window.location.href = "auth.html";
+}
+const userPrefix = "user_" + sessionStorage.getItem("currentUser") + "_";
+
+// ==================== WALLET & SELECTION LOGIC ====================
+let coins = localStorage.getItem(userPrefix + "coins");
+
+// Check fallback sources first before establishing a standard defaults line
+if (coins === null) {
+  coins = localStorage.getItem("coins");
+  if (coins === null) {
+    coins = 3000; // Base baseline profile budget 
+  } else {
+    coins = Number(coins);
+  }
+  localStorage.setItem(userPrefix + "coins", coins);
+} else {
+  coins = Number(coins);
+}
+
+const coinText = document.getElementById("coinText");
+const message = document.getElementById("message");
+
+// Update interface balance blocks immediately
+coinText.innerText = coins.toLocaleString('id-ID');
+localStorage.setItem("coins", coins);
+
+// Individual profile cosmetic storage options
+let ownedItems = JSON.parse(localStorage.getItem(userPrefix + "ownedItems")) || ["Default Bean", "Classic Board"];
+let equippedBean = localStorage.getItem(userPrefix + "equippedBean") || "Default Bean";
+let equippedBoard = localStorage.getItem(userPrefix + "equippedBoard") || "Classic Board";
+
+localStorage.setItem(userPrefix + "ownedItems", JSON.stringify(ownedItems));
+localStorage.setItem(userPrefix + "equippedBean", equippedBean);
+localStorage.setItem(userPrefix + "equippedBoard", equippedBoard);
+
+let targetedCoinsValue = 0;
+let targetedPriceValue = 0;
+
+const buttons = document.querySelectorAll(".buy-btn:not(.coin-btn)");
+
+function updateButtonStates() {
+  buttons.forEach(button => {
+    const itemName = button.dataset.name;
+    const itemType = button.dataset.type;
+
+    if (ownedItems.includes(itemName)) {
+      if ((itemType === "bean" && equippedBean === itemName) || (itemType === "board" && equippedBoard === itemName)) {
+        button.innerText = "Equipped ✨";
+        button.className = "buy-btn equipped";
+      } else {
+        button.innerText = "Use Item";
+        button.className = "buy-btn owned-inactive";
+      }
+    }
+  });
+}
+
+// Item buying and switching management handler
+buttons.forEach(button => {
+  button.addEventListener("click", () => {
+    const itemName = button.dataset.name;
+    const itemType = button.dataset.type;
+    const price = Number(button.dataset.price);
+
+    if (ownedItems.includes(itemName)) {
+      if (itemType === "bean") equippedBean = itemName;
+      if (itemType === "board") equippedBoard = itemName;
+      
+      localStorage.setItem(userPrefix + "equippedBean", equippedBean);
+      localStorage.setItem(userPrefix + "equippedBoard", equippedBoard);
+      message.innerText = `${itemName} equipped! 🌟`;
+      updateButtonStates();
+    } 
+    else if (coins >= price) {
+      coins -= price;
+      localStorage.setItem(userPrefix + "coins", coins);
+      localStorage.setItem("coins", coins); // Global engine sync
+      coinText.innerText = coins.toLocaleString('id-ID');
+
+      ownedItems.push(itemName);
+      localStorage.setItem(userPrefix + "ownedItems", JSON.stringify(ownedItems));
+
+      if (itemType === "bean") equippedBean = itemName;
+      if (itemType === "board") equippedBoard = itemName;
+      
+      localStorage.setItem(userPrefix + "equippedBean", equippedBean);
+      localStorage.setItem(userPrefix + "equippedBoard", equippedBoard);
+
+      message.innerText = `Purchased & Equipped ${itemName}! 🎉`;
+      updateButtonStates();
+    } else {
+      message.innerText = "Not enough coins 😢";
+    }
+
+    setTimeout(() => { message.innerText = ""; }, 2000);
+  });
+});
+
+/* =======================================
+   MOCK PAYMENT SYSTEM INTERACTION LOGIC
+======================================= */
+function openEPayGateway(coinQuantity, priceRupiah) {
+  targetedCoinsValue = coinQuantity;
+  targetedPriceValue = priceRupiah;
+
+  document.getElementById("modalProductName").innerText = coinQuantity.toLocaleString('id-ID') + " Coins Bundle";
+  document.getElementById("modalProductPrice").innerText = "Rp " + priceRupiah.toLocaleString('id-ID');
+  
+  document.getElementById("paymentOverlay").style.display = "flex";
+}
+
+function closeEPayGateway() {
+  document.getElementById("paymentOverlay").style.display = "none";
+}
+
+function triggerMockPaymentSuccess() {
+  coins += targetedCoinsValue;
+  localStorage.setItem(userPrefix + "coins", coins);
+  localStorage.setItem("coins", coins); // Sync directly back to global key
+  coinText.innerText = coins.toLocaleString('id-ID');
+
+  message.innerText = `Successfully added +${targetedCoinsValue.toLocaleString('id-ID')} Coins via E-Money! ⚡`;
+  
+  closeEPayGateway();
+  setTimeout(() => { message.innerText = ""; }, 3500);
+}
+
+// Initial setup load checks
+updateButtonStates();
+
+// Bottom Navigation active highlight style handler
+const currentPage = window.location.pathname;
+const navItems = document.querySelectorAll(".nav-item");
+
+navItems.forEach(item => {
+  const link = item.getAttribute("href");
+  if (link && currentPage.includes(link)) {
+    item.classList.add("active");
+  }
+  item.addEventListener("click", function (e) {
+    const circle = document.createElement("span");
+    circle.classList.add("ripple");
+    const rect = this.getBoundingClientRect();
+    circle.style.left = e.clientX - rect.left + "px";
+    circle.style.top = e.clientY - rect.top + "px";
+    this.appendChild(circle);
+    setTimeout(() => circle.remove(), 600);
+  });
+});
+</script>
+
+</body>
+</html>

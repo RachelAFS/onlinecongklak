@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Congklak Deluxe - Welcome</title>
+  
+  <!-- FONTS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght=400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================================================
+       GENERAL STYLES
+       ========================================================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Baloo 2', cursive;
+      background: linear-gradient(180deg, #bfa6e0, #f4b6d8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    /* ==========================================================================
+       AUTH CARD CONFIGURATION
+       ========================================================================== */
+    .auth-card {
+      background: white;
+      padding: 35px 30px;
+      border-radius: 25px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 340px;
+      text-align: center;
+      animation: formLoad 0.3s ease;
+    }
+
+    h2 { 
+      color: #8e168b; 
+      margin-bottom: 15px;
+      font-size: 2rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      margin: 10px 0;
+      border: 2px solid #e2daf0;
+      border-radius: 15px;
+      font-family: 'Baloo 2', cursive;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    input:focus { 
+      border-color: #ff985d; 
+    }
+
+    button {
+      background: #ff985d;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 15px;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+    button:hover { 
+      background: #e6834b;
+    }
+    
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .toggle-link {
+      color: #8e168b;
+      margin-top: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      text-decoration: underline;
+      display: inline-block;
+    }
+    
+    .toggle-link:hover {
+      opacity: 0.8;
+    }
+
+    #errorMessage {
+      color: #e05656; 
+      font-size: 14px; 
+      font-weight: bold;
+      display: none;
+      margin-bottom: 10px;
+      background: #ffebeb;
+      padding: 8px;
+      border-radius: 10px;
+    }
+
+    @keyframes formLoad {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="auth-card">
+  <h2 id="authTitle">🌸 Log In 🌸</h2>
+  <div id="errorMessage"></div>
+  
+  <input type="text" id="username" placeholder="Username" autocomplete="username">
+  <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+  
+  <button onclick="handleAuth()" id="authBtn">Enter Game</button>
+  <div class="toggle-link" onclick="toggleAuthMode()" id="toggleMsg">New player? Create an account!</div>
+</div>
+
+<script>
+  let isSignUpMode = false;
+
+  // Run a security check: if already authenticated, skip directly to home base
+  if(sessionStorage.getItem("isLoggedIn") === "true") {
+    window.location.href = "home page.html";
+  }
+
+  function toggleAuthMode() {
+    isSignUpMode = !isSignUpMode;
+    document.getElementById("authTitle").innerText = isSignUpMode ? "✨ Sign Up ✨" : "🌸 Log In 🌸";
+    document.getElementById("authBtn").innerText = isSignUpMode ? "Register Account" : "Enter Game";
+    document.getElementById("toggleMsg").innerText = isSignUpMode ? "Already have an account? Log In" : "New player? Create an account!";
+    document.getElementById("errorMessage").style.display = "none";
+    
+    // Clear inputs on toggle
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
+  }
+
+  function handleAuth() {
+    const user = document.getElementById("username").value.trim();
+    const pass = document.getElementById("password").value;
+    const errorDiv = document.getElementById("errorMessage");
+
+    if(!user || !pass) {
+      errorDiv.innerText = "Please fill in all layout blocks!";
+      errorDiv.style.display = "block";
+      return;
+    }
+
+    if(isSignUpMode) {
+      // Sign Up Engine Routing
+      if(localStorage.getItem("user_" + user)) {
+        errorDiv.innerText = "Username already exists!";
+        errorDiv.style.display = "block";
+      } else {
+        localStorage.setItem("user_" + user, pass);
+        alert("🎉 Registration Complete! Logging you in...");
+        logUserIn(user);
+      }
+    } else {
+      // Log In Validation Engine
+      const savedPassword = localStorage.getItem("user_" + user);
+      if(savedPassword && savedPassword === pass) {
+        logUserIn(user);
+      } else {
+        errorDiv.innerText = "Invalid credentials! Check spelling.";
+        errorDiv.style.display = "block";
+      }
+    }
+  }
+
+  function logUserIn(username) {
+    sessionStorage.setItem("isLoggedIn", "true");
+    sessionStorage.setItem("currentUser", username);
+
+    // Initialize player identity profile data fields safely
+    localStorage.setItem("playerName", username);
+
+    const profilePrefix = "user_" + username + "_";
+
+    // Check if this specific user has game data saved. If not, initialize a FRESH profile!
+    if (!localStorage.getItem(profilePrefix + "initialized")) {
+      localStorage.setItem(profilePrefix + "initialized", "true");
+      
+      // Seed account data variables symmetrically
+      localStorage.setItem(profilePrefix + "level", "1");
+      localStorage.setItem(profilePrefix + "coins", "3000"); 
+      localStorage.setItem(profilePrefix + "lessonsCompleted", "0");
+      localStorage.setItem(profilePrefix + "gamesPlayed", "0");
+      
+      // Update the global baseline links for the home page layout counters right away
+      localStorage.setItem("level", "1");
+      localStorage.setItem("coins", "3000");
+      localStorage.setItem("lessonsCompleted", "0");
+      localStorage.setItem("gamesPlayed", "0");
+      
+      // Asset store arrays
+      localStorage.setItem(profilePrefix + "gameFriendsArray", JSON.stringify([]));
+      localStorage.setItem(profilePrefix + "claimedDailyRewards", JSON.stringify({}));
+      localStorage.setItem(profilePrefix + "lastClaimedRewardDate", "");
+      
+      // Clear legacy mission parameters if spinning up a clean alternative profile
+      localStorage.removeItem("rewardClaimed_games");
+      localStorage.removeItem("rewardClaimed_level");
+      localStorage.removeItem("rewardClaimed_lessons");
+      localStorage.removeItem("rewardClaimed_friends");
+      localStorage.removeItem("rewardClaimed_hoarder");
+
+      // Custom configuration parameters
+      localStorage.setItem(profilePrefix + "equippedBean", "Default Bean");
+      localStorage.setItem(profilePrefix + "equippedBoard", "Classic Board");
+    } else {
+      // If user is already initialized, bridge profile configurations dynamically back to global states
+      let storedCoins = localStorage.getItem(profilePrefix + "coins") || "3000";
+      let storedLevel = localStorage.getItem(profilePrefix + "level") || "1";
+      let storedLessons = localStorage.getItem(profilePrefix + "lessonsCompleted") || "0";
+      let storedGames = localStorage.getItem(profilePrefix + "gamesPlayed") || "0";
+      
+      localStorage.setItem("coins", storedCoins);
+      localStorage.setItem("level", storedLevel);
+      localStorage.setItem("lessonsCompleted", storedLessons);
+      localStorage.setItem("gamesPlayed", storedGames);
+    }
+
+    window.location.href = "home page.html";
+  }
+</script>
+</body>
+</html>

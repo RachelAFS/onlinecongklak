@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Congklak Lessons</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+  font-family:'Baloo 2', cursive;
+  background:linear-gradient(180deg,#bfa6e0,#f4b6d8);
+  text-align:center;
+  margin:0;
+  padding-bottom: 50px;
+}
+
+h1{color:white;margin-top:20px}
+
+.lesson-card{
+  background:white;
+  width:80%;
+  max-width:600px;
+  margin:20px auto;
+  padding:20px;
+  border-radius:20px;
+  box-shadow:0 8px 18px rgba(0,0,0,.2);
+  text-align: left;
+}
+.lesson-card h2 { color: #8e168b; margin-top: 0; }
+.lesson-card p { color: #333; }
+
+button{
+  background:#ff985d;
+  color:white;
+  border:none;
+  padding:12px 20px;
+  border-radius:20px;
+  font-size:18px;
+  cursor:pointer;
+  margin-top:15px;
+}
+
+.done{
+  background:#8be28b !important;
+}
+
+/* Style for the new Redo Button */
+.redo-btn {
+  background: #a8a8a8;
+  margin-left: 10px;
+}
+.redo-btn:hover {
+  background: #e55353;
+}
+
+.progress{
+  color:white;
+  font-size:22px;
+  margin-top:10px;
+}
+
+/* ================= MINI GAME BOARD CSS ================= */
+.mini-game-container {
+  background: #f7f3fc;
+  border-radius: 15px;
+  padding: 15px;
+  margin: 15px 0;
+  border: 2px dashed #bfa6e0;
+  text-align: center;
+}
+.instruction-badge {
+  background: #ffecdb;
+  color: #e67e22;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+.mini-board-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+.mini-board {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #b5835a;
+  padding: 8px;
+  border-radius: 12px;
+}
+.mini-row {
+  display: flex;
+  gap: 8px;
+}
+.mini-hole {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: #ffe5b4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #6b2e83;
+  box-shadow: inset 0 3px 5px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.mini-hole:hover { transform: scale(1.05); }
+.mini-hole.highlight {
+  border: 3px solid #ff985d;
+  background: #fff2cc;
+  box-shadow: 0 0 10px #ff985d;
+}
+.mini-store {
+  width: 50px;
+  height: 98px;
+  border-radius: 25px;
+  background: #ffb6c1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  box-shadow: inset 0 3px 5px rgba(0,0,0,0.2);
+}
+</style>
+</head>
+
+<body>
+
+<h1>📚 Congklak Academy</h1>
+<div class="progress">
+Lessons Completed: <span id="lessonCount">0</span> / 10
+</div>
+
+<!-- LESSON 1 -->
+<div class="lesson-card">
+<h2>Lesson 1 — What is Congklak?</h2>
+<p>
+👋 Welcome to Congklak Academy, Player!
+
+Long ago in Indonesia, kids played Congklak after school to train their brains 🧠  
+It looks simple… but it’s secretly a strategy battle 😎
+
+Your mission:
+Collect MORE stones in your house 🏠 than your opponent.
+
+Ready to become a Congklak master?
+</p>
+<button onclick="completeLessonButton(1)" id="btn1">Complete Lesson</button>
+<span id="redoContainer1"></span>
+</div>
+
+<!-- LESSON 2 -->
+<div class="lesson-card">
+<h2>Lesson 2 — Starting the Game</h2>
+<p>
+🎮 Let’s start the game!
+
+Every small hole begins with 7 stones.
+Pick ONE hole on your side and drop stones one by one clockwise.
+
+It feels easy at first…
+but every move changes the future 👀
+</p>
+<button onclick="completeLessonButton(2)" id="btn2">Complete Lesson</button>
+<span id="redoContainer2"></span>
+</div>
+
+<!-- LESSON 3 -->
+<div class="lesson-card">
+<h2>Lesson 3 — Extra Turn Rule</h2>
+<p>
+🔥 SECRET POWER UNLOCKED 🔥
+
+If your last stone lands in your HOUSE 🏠  
+You get ANOTHER TURN 😱
+
+Yes… you can play again immediately.
+Smart players chain turns together to dominate the board.
+</p>
+<button onclick="completeLessonButton(3)" id="btn3">Complete Lesson</button>
+<span id="redoContainer3"></span>
+</div>
+
+<!-- LESSON 4 -->
+<div class="lesson-card">
+<h2>Lesson 4 — Capture Rule</h2>
+<p>
+😎 Ninja move time…
+
+If your last stone lands in an EMPTY hole on your side,
+you steal ALL stones from the opposite hole!
+
+Sneaky? Yes.
+Powerful? VERY.
+This move can flip the game instantly.
+</p>
+<button onclick="completeLessonButton(4)" id="btn4">Complete Lesson</button>
+<span id="redoContainer4"></span>
+</div>
+
+<!-- LESSON 5 -->
+<div class="lesson-card">
+<h2>Lesson 5 — Winning the Game</h2>
+<p>
+🏆 The FINAL battle
+
+The game ends when one side runs out of stones.
+Time to count treasure!
+
+Whoever has the MOST stones in their house wins.
+Victory belongs to the smartest strategist 🧠✨
+</p>
+<button onclick="completeLessonButton(5)" id="btn5">Complete Lesson</button>
+<span id="redoContainer5"></span>
+</div>
+
+
+<!-- ================= INTERACTIVE GAME LESONS (6-10) ================= -->
+
+<!-- LESSON 6 -->
+<div class="lesson-card">
+<h2>Lesson 6 — Interactive: Drop Clockwise</h2>
+<p>
+Let's practice the basic mechanics! Stones must always travel in a clockwise circle. 
+If you click a hole, its contents will move around the board.
+</p>
+<div class="mini-game-container">
+  <div class="instruction-badge">🎯 Objective: Tap the glowing hole with 2 stones to sow them clockwise!</div>
+  <div class="mini-board-wrapper">
+    <div class="mini-store">🏠</div>
+    <div class="mini-board">
+      <div class="mini-row">
+        <div class="mini-hole" id="l6_h3">0</div>
+        <div class="mini-hole" id="l6_h2">0</div>
+      </div>
+      <div class="mini-row">
+        <div class="mini-hole highlight" id="l6_h0" onclick="playLesson6()">2</div>
+        <div class="mini-hole" id="l6_h1">0</div>
+      </div>
+    </div>
+    <div class="mini-store">🏠</div>
+  </div>
+</div>
+<button id="btn6" disabled style="opacity:0.5;">Complete Interactive Task</button>
+<span id="redoContainer6"></span>
+</div>
+
+<!-- LESSON 7 -->
+<div class="lesson-card">
+<h2>Lesson 7 — Interactive: Chain the Extra Turn</h2>
+<p>
+Landing precisely in your store house keeps your turn alive. Let's practice calculating the exact distance needed to trigger a bonus chain move.
+</p>
+<div class="mini-game-container">
+  <div class="instruction-badge">🎯 Objective: Click the perfect hole that will land exactly in your 🏠 Storehouse!</div>
+  <div class="mini-board-wrapper">
+    <div class="mini-store">🏠</div>
+    <div class="mini-board">
+      <div class="mini-row">
+        <div class="mini-hole">0</div><div class="mini-hole">0</div><div class="mini-hole">0</div>
+      </div>
+      <div class="mini-row">
+        <div class="mini-hole" onclick="alert('Oops! That has 3 stones, it will overshoot your house. Try again!')">3</div>
+        <div class="mini-hole highlight" onclick="playLesson7()">1</div>
+        <div class="mini-hole" onclick="alert('Oops! That has 5 stones, it will go way past your house. Try again!')">5</div>
+      </div>
+    </div>
+    <div class="mini-store" id="l7_store">🏠0</div>
+  </div>
+</div>
+<button id="btn7" disabled style="opacity:0.5;">Complete Interactive Task</button>
+<span id="redoContainer7"></span>
+</div>
+
+<!-- LESSON 8 -->
+<div class="lesson-card">
+<h2>Lesson 8 — Interactive: Executing a Capture</h2>
+<p>
+When your final stone lands in a completely empty hole on your own side, you score a capture of whatever pool of beans your opponent has lying straight across from you.
+</p>
+<div class="mini-game-container">
+  <div class="instruction-badge">🎯 Objective: Tap the highlighted hole to drop your stone into the empty slot and capture the 6 stones!</div>
+  <div class="mini-board-wrapper">
+    <div class="mini-store">🏠</div>
+    <div class="mini-board">
+      <div class="mini-row">
+        <div class="mini-hole" style="background:#fbc531;" id="l8_opp">6</div>
+        <div class="mini-hole">0</div>
+      </div>
+      <div class="mini-row">
+        <div class="mini-hole highlight" onclick="playLesson8()" id="l8_start">1</div>
+        <div class="mini-hole" id="l8_target">0</div>
+      </div>
+    </div>
+    <div class="mini-store">🏠<span id="l8_score">0</span></div>
+  </div>
+</div>
+<button id="btn8" disabled style="opacity:0.5;">Complete Interactive Task</button>
+<span id="redoContainer8"></span>
+</div>
+
+<!-- LESSON 9 -->
+<div class="lesson-card">
+<h2>Lesson 9 — Interactive: Blocking Opponent Moves</h2>
+<p>
+Look closely at the opponent's side (top row). They are waiting to capture your spaces! You can block their trick by filling your vulnerable empty holes before their turn comes up.
+</p>
+<div class="mini-game-container">
+  <div class="instruction-badge">🎯 Objective: Play from the glowing hole to pass a seed into your empty pocket to save it!</div>
+  <div class="mini-board-wrapper">
+    <div class="mini-store">🏠</div>
+    <div class="mini-board">
+      <div class="mini-row">
+        <div class="mini-hole">0</div>
+        <div class="mini-hole" style="background: #e74c3c; color: white;">1</div>
+      </div>
+      <div class="mini-row">
+        <div class="mini-hole highlight" onclick="playLesson9()" id="l9_start">1</div>
+        <div class="mini-hole" id="l9_target" style="border: 2px dashed red;">0</div>
+      </div>
+    </div>
+    <div class="mini-store">🏠</div>
+  </div>
+</div>
+<button id="btn9" disabled style="opacity:0.5;">Complete Interactive Task</button>
+<span id="redoContainer9"></span>
+</div>
+
+<!-- LESSON 10 -->
+<div class="lesson-card">
+<h2>Lesson 10 — Interactive: The Clean Sweep End-Game</h2>
+<p>
+When one side runs out of stones entirely, the game instantly finishes. Any remaining stones on the opposite side automatically go to that side's storehouse!
+</p>
+<div class="mini-game-container">
+  <div class="instruction-badge">🎯 Objective: Tap the final remaining stone to clear the field and claim victory!</div>
+  <div class="mini-board-wrapper">
+    <div class="mini-store">🏠15</div>
+    <div class="mini-board" onclick="playLesson10()" style="cursor:pointer;">
+      <div class="mini-row">
+        <div class="mini-hole">0</div><div class="mini-hole">0</div>
+      </div>
+      <div class="mini-row">
+        <div class="mini-hole">0</div>
+        <div class="mini-hole highlight" id="l10_stone">1</div>
+      </div>
+    </div>
+    <div class="mini-store">🏠<span id="l10_score">18</span></div>
+  </div>
+</div>
+<button id="btn10" disabled style="opacity:0.5;">Complete Interactive Task</button>
+<span id="redoContainer10"></span>
+</div>
+
+
+<a href="home page.html">
+  <button style="margin-bottom:30px;">🏠 Back to Home</button>
+</a>
+
+<script>
+// ==================== STEP A: SECURITY & PREFIX ====================
+if (sessionStorage.getItem("isLoggedIn") !== "true") {
+  window.location.href = "auth.html";
+}
+const userPrefix = "user_" + sessionStorage.getItem("currentUser") + "_";
+
+// ===== QUIZ DATABASE (LESSONS 1-5) =====
+const quizzes = {
+  1:{
+    q:"Congklak comes from which country?",
+    a:["Japan","Indonesia","Brazil"],
+    correct:1
+  },
+  2:{
+    q:"How many stones start in each hole?",
+    a:["5","7","10"],
+    correct:1
+  },
+  3:{
+    q:"If your last stone lands in your house you get…",
+    a:["Lose turn","Extra turn","Game over"],
+    correct:1
+  },
+  4:{
+    q:"Landing in empty hole lets you…",
+    a:["Skip turn","Capture stones","Restart game"],
+    correct:1
+  },
+  5:{
+    q:"How do you win Congklak?",
+    a:["Most stones in house","Most turns","Fastest move"],
+    correct:0
+  }
+};
+
+// ===== LOAD SAVED PROGRESS =====
+let lessonsDone = Number(localStorage.getItem(userPrefix + "lessonsDone")) || 0;
+document.getElementById("lessonCount").innerText = lessonsDone;
+
+// Setup buttons based on account-specific saved localStorage data
+for(let i=1; i<=10; i++){
+  if(localStorage.getItem(userPrefix + "lesson" + i) === "done"){
+    let btn = document.getElementById("btn" + i);
+    if(btn) {
+      btn.classList.add("done");
+      btn.innerText = "Completed ✓";
+      btn.disabled = true;
+      btn.style.opacity = "1";
+    }
+
+    // Add account-safe Redo button container
+    let redoContainer = document.getElementById("redoContainer" + i);
+    if(redoContainer) {
+      redoContainer.innerHTML = `
+        <button class="redo-btn" onclick="redoLesson(${i})">🔄 Redo</button>
+      `;
+    }
+  }
+}
+
+// ===== QUIZ POPUP (For Lessons 1-5) =====
+function showQuiz(lessonNumber){
+  let quiz = quizzes[lessonNumber];
+
+  let answers = "";
+  quiz.a.forEach((ans,index)=>{
+    answers += `<button onclick="checkAnswer(${lessonNumber},${index})">${ans}</button><br><br>`;
+  });
+
+  document.body.insertAdjacentHTML("beforeend",`
+    <div id="quizBox" style="
+      position:fixed;
+      top:0;left:0;width:100%;height:100%;
+      background:rgba(0,0,0,.7);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      z-index:999;
+    ">
+      <div style="
+        background:white;
+        padding:30px;
+        border-radius:20px;
+        text-align:center;
+        max-width:400px;
+        font-family:'Baloo 2';
+      ">
+        <h2>Mini Quiz 🧠</h2>
+        <p>${quiz.q}</p>
+        ${answers}
+      </div>
+    </div>
+  `);
+}
+
+// ===== CHECK ANSWER =====
+function checkAnswer(lessonNumber,choice){
+  let quiz = quizzes[lessonNumber];
+
+  if(choice === quiz.correct){
+    document.getElementById("quizBox").remove();
+    completeLesson(lessonNumber);
+  }else{
+    alert("Oops! Try again 😆");
+  }
+}
+
+// ===== INTERACTIVE LESSONS MECHANICS ENGINE (6-10) =====
+
+function playLesson6() {
+  if(localStorage.getItem(userPrefix + "lesson6") === "done") return;
+  document.getElementById("l6_h0").classList.remove("highlight");
+  document.getElementById("l6_h0").innerText = "0";
+  
+  setTimeout(() => { document.getElementById("l6_h1").innerText = "1"; }, 250);
+  setTimeout(() => { 
+    document.getElementById("l6_h2").innerText = "1"; 
+    unlockInteractiveButton(6);
+  }, 500);
+}
+
+function playLesson7() {
+  if(localStorage.getItem(userPrefix + "lesson7") === "done") return;
+  document.getElementById("l7_store").innerText = "🏠1";
+  document.getElementById("l7_store").style.background = "#8be28b";
+  alert("🎉 Target hit! Perfect extra-turn match execution!");
+  unlockInteractiveButton(7);
+}
+
+function playLesson8() {
+  if(localStorage.getItem(userPrefix + "lesson8") === "done") return;
+  document.getElementById("l8_start").classList.remove("highlight");
+  document.getElementById("l8_start").innerText = "0";
+  document.getElementById("l8_target").innerText = "1";
+
+  setTimeout(() => {
+    alert("⚔️ Capture successful! Stealing opposite stones!");
+    document.getElementById("l8_target").innerText = "0";
+    document.getElementById("l8_opp").innerText = "0";
+    document.getElementById("l8_score").innerText = "7";
+    unlockInteractiveButton(8);
+  }, 400);
+}
+
+function playLesson9() {
+  if(localStorage.getItem(userPrefix + "lesson9") === "done") return;
+  document.getElementById("l9_start").classList.remove("highlight");
+  document.getElementById("l9_start").innerText = "0";
+  document.getElementById("l9_target").innerText = "1";
+  document.getElementById("l9_target").style.border = "none";
+  alert("🛡️ Blocked! You filled your empty space so the opponent cannot steal it.");
+  unlockInteractiveButton(9);
+}
+
+function playLesson10() {
+  if(localStorage.getItem(userPrefix + "lesson10") === "done") return;
+  document.getElementById("l10_stone").innerText = "0";
+  document.getElementById("l10_stone").classList.remove("highlight");
+  document.getElementById("l10_score").innerText = "19";
+  alert("🏆 Clean sweep! Field cleared successfully.");
+  unlockInteractiveButton(10);
+}
+
+function unlockInteractiveButton(num) {
+  let btn = document.getElementById("btn"+num);
+  if (btn) {
+    btn.disabled = false;
+    btn.style.opacity = "1";
+    btn.innerText = "Claim Victory Reward! 🎉";
+    btn.onclick = () => completeLesson(num);
+  }
+}
+
+
+// ===== COMPLETE LESSON REWARD DISPATCHER =====
+function completeLesson(lessonNumber){
+  if(localStorage.getItem(userPrefix + "lesson" + lessonNumber) === "done") return;
+
+  localStorage.setItem(userPrefix + "lesson" + lessonNumber, "done");
+
+  let lessonsDone = Number(localStorage.getItem(userPrefix + "lessonsDone")) || 0;
+  lessonsDone++;
+  localStorage.setItem(userPrefix + "lessonsDone", lessonsDone);
+  localStorage.setItem(userPrefix + "lessonsCompleted", lessonsDone); 
+
+  // ⭐ LEVEL UP
+  let level = Number(localStorage.getItem(userPrefix + "level")) || 1;
+  level++;
+  localStorage.setItem(userPrefix + "level", level);
+
+  // 🪙 COINS REWARD
+  let coins = Number(localStorage.getItem(userPrefix + "coins")) || 0;
+  coins += 10;
+  localStorage.setItem(userPrefix + "coins", coins);
+
+  alert("🎉 Lesson complete!\n+1 Level\n+10 Coins 🪙");
+  location.reload();
+}
+
+// ===== REDO LESSON =====
+function redoLesson(lessonNumber) {
+  if (confirm("Do you want to redo this lesson? This will reset its completion status!")) {
+    localStorage.removeItem(userPrefix + "lesson" + lessonNumber);
+
+    let lessonsDone = Number(localStorage.getItem(userPrefix + "lessonsDone")) || 0;
+    if (lessonsDone > 0) lessonsDone--;
+    localStorage.setItem(userPrefix + "lessonsDone", lessonsDone);
+    localStorage.setItem(userPrefix + "lessonsCompleted", lessonsDone);
+
+    let level = Number(localStorage.getItem(userPrefix + "level")) || 1;
+    if (level > 1) level--;
+    localStorage.setItem(userPrefix + "level", level);
+
+    let coins = Number(localStorage.getItem(userPrefix + "coins")) || 0;
+    if (coins >= 10) coins -= 10;
+    localStorage.setItem(userPrefix + "coins", coins);
+
+    location.reload();
+  }
+}
+
+// ===== BUTTON CLICK = OPEN QUIZ (For Lessons 1-5) =====
+function completeLessonButton(lessonNumber){
+  if(localStorage.getItem(userPrefix + "lesson" + lessonNumber) === "done"){
+    alert("Already completed!");
+    return;
+  }
+  showQuiz(lessonNumber);
+}
+</script>
+
+</body>
+</html>

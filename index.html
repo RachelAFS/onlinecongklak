@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="google-site-verification" content="8ZzzRzacA_rEvq5vQLDbaUzBH2AFmxGM-_lHlkKpwCw" />
+  <meta charset="UTF-8">
+  <title>Congklak</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- ICONS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <style>
+    body {
+      font-family: Poppins, 'Baloo 2', sans-serif;
+      background: linear-gradient(180deg,#bfa6e0,#f4b6d8);
+      text-align: center;
+    }
+    .nav-item.active {
+      color: white;
+    }
+    h1 { color: white; }
+    .info { color: white; font-size: 20px; }
+    .turn { color: white; font-size: 22px; margin-top: 10px; }
+
+    .board-wrapper { display: flex; justify-content: center; align-items: center; gap: 25px; margin-top: 20px; }
+    .board { display: flex; flex-direction: column; gap: 15px; padding: 15px; border-radius: 30px; transition: 0.3s; }
+    .row { display: flex; gap: 15px; }
+
+    /* small holes */
+    .hole {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      padding: 6px;
+      box-sizing: border-box;
+      background: #ffe5b4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      font-weight: bold;
+      box-shadow: 0 6px 14px rgba(0,0,0,.3);
+      cursor: pointer;
+      transition: .2s;
+    }
+    .hole:hover { transform: scale(1.1); }
+
+    /* BIG stores (ovals) */
+    .store {
+      height: 210px;
+      width: 100px;
+      border-radius: 50px;
+      background: #ffb6c1;
+      box-shadow: 0 6px 14px rgba(0,0,0,.3);
+      display: flex;
+      flex-direction: column;        /* stack vertically */
+      align-items: center;
+      justify-content: flex-start;   /* move content to TOP */
+      padding-top: 6px;              /* space from top curve */
+      transition: 0.3s;
+    }
+
+    button {
+      margin: 8px; padding: 10px 16px; border: none; border-radius: 20px;
+      background: #ff9bd2; color: white; font-weight: bold; cursor: pointer;
+    }
+
+    .popup {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      background: white; padding: 25px; border-radius: 20px; display: none;
+      width: 300px; box-shadow: 0 0 20px rgba(0,0,0,.3);
+      z-index: 1000;
+    }
+    .footer {
+      margin-top: 30px;
+      padding: 20px;
+      background: #a678d6;
+      color: white;
+      border-radius: 25px 25px 0 0;
+    }
+    .storeStones {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 3px;
+      justify-items: center;
+      align-items: start;
+      font-size: 10px;
+      line-height: 10px;
+      width: 100px;      
+      max-height: 140px;
+      overflow: hidden;
+    }
+    .celebrate {
+      position: fixed;
+      bottom: -40px;
+      font-size: 30px;
+      animation: flyUp 2.5s linear forwards;
+      pointer-events: none;
+    }
+
+    @keyframes flyUp {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-110vh) rotate(720deg); opacity: 0; }
+    }
+    .stones {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3px;
+      justify-items: center;
+      align-items: center;
+      font-size: 12px;
+      line-height: 12px;
+      width: 70px;
+    }
+    .flyingStone {
+      position: fixed;
+      font-size: 26px;
+      pointer-events: none;
+      z-index: 999;
+      transition: transform .6s ease-in-out; 
+    }
+    .storeTop {
+      font-size: 26px;
+      margin-bottom: 4px;
+    }
+    .footer button {
+      background: #ffb3e6;
+      color: #6b2e83;
+      margin: 6px;
+    }
+    
+    /* ==================== BOTTOM NAVIGATION STYLES ==================== */
+    .bottom-nav {
+      margin-top: 25px;
+      background: linear-gradient(90deg,#9db5f8,#eea6f5);
+      border-radius: 30px;
+      padding: 20px;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 15px;
+      overflow: visible; 
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #8e168b;
+      position: relative;
+      cursor: pointer;
+      text-decoration: none;
+      overflow: visible; 
+      transition: 0.2s ease;
+    }
+
+    .nav-item i { font-size: 2rem; }
+    .nav-item span { font-size: 1.2rem; pointer-events: none; }
+
+    .nav-item.active {
+      color: white;
+      transform: translateY(-3px);
+    }
+
+    .nav-item.active::before {
+      content: "";
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%); 
+      width: 40px;
+      height: 6px;
+      background: white;
+      border-radius: 10px;
+      filter: blur(2px);
+      z-index: 10;
+    }
+
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.6);
+      transform: scale(0);
+      pointer-events: none;
+      animation: rippleAnim 0.6s linear;
+    }
+
+    @keyframes rippleAnim {
+      to { transform: scale(4); opacity: 0; }
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🌸 Congklak Deluxe 🌸</h1>
+
+<div class="info">
+  Level <span id="levelSpan"></span> |
+  Coins Rp <span id="coinsSpan"></span> |
+  Bet Rp <span id="betSpan">0</span>
+</div>
+
+<div class="turn">Turn: <span id="turnText">Player 1</span></div>
+
+<button onclick="setBet()">💰 Place Bet</button>
+<button onclick="showHow()">📖 How To Play</button>
+<button onclick="showTips()">🧠 Strategy</button>
+<button onclick="showBoard()">🏆 Leaderboard</button>
+
+<div class="board-wrapper">
+  <div id="store2" class="store"></div>
+  <div class="board" id="mainGameBoard">
+    <div class="row" id="topRow"></div>
+    <div class="row" id="bottomRow"></div>
+  </div>
+  <div id="store1" class="store"></div>
+</div>
+
+<button onclick="newGame()">New Match</button>
+<button onclick="toggleMode()">Mode: <span id="mode">2 Players</span></button>
+
+<!-- POPUPS -->
+<div id="popup" class="popup"></div>
+
+<div class="footer">
+  <h3>🎮 Game Center</h3>
+  <p>📞 Contact Us: 
+    <a href="tel:+6283272310488" style="color:white;font-weight:bold">
+      +62 3746 8919
+    </a>
+  </p>
+
+  <button onclick="donate()">💖 Donate to FundGame</button>
+  <button onclick="showHelp()">🆘 Need Help?</button>
+  <button onclick="refreshGame()">🔄 Refresh Game</button>
+  <button onclick="resetProgress()">🧹 Reset Progress</button>
+</div>
+
+<nav class="bottom-nav">
+  <a href="home page.html" class="nav-item">
+    <i class="fa-solid fa-house"></i>
+    <span>Home</span>
+  </a>
+  <a href="index.html" class="nav-item active">
+    <i class="fa-solid fa-compass"></i>
+    <span>Adventure</span>
+  </a>
+  <a href="shop.html" class="nav-item">
+    <i class="fa-solid fa-store"></i>
+    <span>Shop</span>
+  </a>
+  <a href="credits.html" class="nav-item">
+    <i class="fa-solid fa-users"></i>
+    <span>Credits</span>
+  </a>
+</nav>
+
+<script>
+// ==================== STEP A: SECURITY & PREFIX ====================
+// FIX: Changed from localStorage to sessionStorage to prevent the auth boot-loop
+if (sessionStorage.getItem("isLoggedIn") !== "true") {
+  window.location.href = "auth.html";
+}
+
+// Extract identity maps
+const currentUser = sessionStorage.getItem("currentUser") || "Guest";
+const userPrefix = "user_" + currentUser + "_";
+// ==================== STEP B: VARIABLE DECLARATIONS & ACCOUNT SYNC ====================
+let board, playerTurn, vsAI = false;
+let bet = 0;
+
+// Pull specified profile state cleanly, falling back onto platform slots or standard 3,000 budget
+let storedCoins = localStorage.getItem(userPrefix + "coins");
+if (storedCoins === null) {
+  storedCoins = localStorage.getItem("coins") || "3000";
+  localStorage.setItem(userPrefix + "coins", storedCoins);
+}
+
+let level = Number(localStorage.getItem(userPrefix + "level")) || 1;
+let coins = Number(storedCoins);
+let gamesPlayed = Number(localStorage.getItem(userPrefix + "gamesPlayed")) || 0;
+let lessonsCompleted = Number(localStorage.getItem(userPrefix + "lessonsCompleted")) || 0;
+let leaderboard = JSON.parse(localStorage.getItem("leaderboard") || "[]");
+
+// Harmonize session variables immediately
+localStorage.setItem("coins", coins);
+
+// ====== SKIN DATA DICTIONARIES ======
+const beanSkins = {
+  "Default Bean": "⚫",
+  "Apple Bean": "🍎",
+  "Cat Bean": "🐾",
+  "Blue Bean": "🔹"
+};
+
+const boardSkins = {
+  "Classic Board": { main: "transparent", holes: "#ffe5b4", stores: "#ffb6c1" },
+  "Cookie Board": { main: "#7f5539", holes: "#ddbdfc", stores: "#b5835a" },
+  "Magic Board": { main: "#4a0072", holes: "#e0aaff", stores: "#7b2cbf" },
+  "Stone Board": { main: "#4f5d75", holes: "#d1d5db", stores: "#2d3142" }
+};
+
+let currentBeanSign = "⚫";
+
+// ==================== ENGINE EVENTS ====================
+window.onload = function(){
+  level = Number(localStorage.getItem(userPrefix + "level")) || level;
+  coins = Number(localStorage.getItem(userPrefix + "coins")) || coins;
+  lessonsCompleted = Number(localStorage.getItem(userPrefix + "lessonsCompleted")) || lessonsCompleted;
+  gamesPlayed = Number(localStorage.getItem(userPrefix + "gamesPlayed")) || gamesPlayed;
+  
+  localStorage.setItem("coins", coins);
+  
+  applySkins();
+  refreshUI();
+}
+
+function save() {
+  localStorage.setItem(userPrefix + "level", level);
+  localStorage.setItem(userPrefix + "coins", coins);
+  localStorage.setItem(userPrefix + "gamesPlayed", gamesPlayed);
+  localStorage.setItem(userPrefix + "lessonsCompleted", lessonsCompleted);
+  
+  // Update global parameters smoothly to update Shop values
+  localStorage.setItem("coins", coins);
+  localStorage.setItem("level", level);
+  localStorage.setItem("lessonsCompleted", lessonsCompleted);
+  localStorage.setItem("gamesPlayed", gamesPlayed);
+
+  localStorage.setItem("leaderboard", JSON.stringify(leaderboard)); 
+}
+
+function applySkins() {
+  let activeBeanName = localStorage.getItem(userPrefix + "equippedBean") || "Default Bean";
+  let activeBoardName = localStorage.getItem(userPrefix + "equippedBoard") || "Classic Board";
+
+  currentBeanSign = beanSkins[activeBeanName] || "⚫";
+
+  let layout = boardSkins[activeBoardName] || boardSkins["Classic Board"];
+  let gameBoardDiv = document.getElementById("mainGameBoard");
+  if(gameBoardDiv) gameBoardDiv.style.backgroundColor = layout.main;
+  
+  let styleTag = document.getElementById("dynamicSkinStyle");
+  if(!styleTag) {
+    styleTag = document.createElement("style");
+    styleTag.id = "dynamicSkinStyle";
+    document.head.appendChild(styleTag);
+  }
+  styleTag.innerHTML = `
+    .hole { background-color: ${layout.holes} !important; }
+    .store { background-color: ${layout.stores} !important; }
+  `;
+}
+
+function refreshUI(){
+  if(document.getElementById("levelSpan")) document.getElementById("levelSpan").innerText = level;
+  if(document.getElementById("coinsSpan")) document.getElementById("coinsSpan").innerText = Number(coins).toLocaleString('id-ID');
+  if(document.getElementById("betSpan")) document.getElementById("betSpan").innerText = Number(bet).toLocaleString('id-ID');
+}
+
+function toggleMode(){ 
+  vsAI = !vsAI; 
+  const modeBtn = document.getElementById("mode");
+  if (modeBtn) modeBtn.innerText = vsAI ? "VS AI" : "2 Players"; 
+}
+
+function setBet(){
+  let amount = Number(prompt("Enter bet (max Rp500)"));
+  if(isNaN(amount) || amount < 0) amount = 0;
+  if(amount > 500) amount = 500;
+  if(amount > coins) return alert("Not enough coins!");
+  bet = amount;
+  refreshUI();
+}
+
+function newGame(){
+  board = [7,7,7,7,7,7,7,0,7,7,7,7,7,7,7,0];
+  playerTurn = 1;
+  applySkins(); 
+  drawBoard(); updateStores(); updateTurn();
+}
+
+function drawBoard(){
+  const topRow = document.getElementById("topRow");
+  const bottomRow = document.getElementById("bottomRow");
+  if(!topRow || !bottomRow) return;
+  
+  topRow.innerHTML = ""; 
+  bottomRow.innerHTML = "";
+  for(let i=14; i>=8; i--) createHole(i, topRow);
+  for(let i=0; i<=6; i++) createHole(i, bottomRow);
+}
+
+function createHole(index, row){
+  let hole = document.createElement("div");
+  hole.className = "hole";
+  hole.id = "hole" + index;
+  hole.onclick = () => move(index);
+
+  let stonesDiv = document.createElement("div");
+  stonesDiv.className = "stones";
+
+  for(let i=0; i<board[index]; i++){
+      let s = document.createElement("span");
+      s.innerText = currentBeanSign; 
+      stonesDiv.appendChild(s);
+  }
+  hole.appendChild(stonesDiv);
+  row.appendChild(hole);
+}
+
+function updateStores(){
+  const store1 = document.getElementById("store1");
+  const store2 = document.getElementById("store2");
+  if(!store1 || !store2) return;
+
+  store1.innerHTML = ""; 
+  store2.innerHTML = "";
+
+  let h1 = document.createElement("div"); h1.className = "storeTop"; h1.innerText = "🏠";
+  let h2 = document.createElement("div"); h2.className = "storeTop"; h2.innerText = "🏠";
+
+  store1.appendChild(h1); store2.appendChild(h2);
+
+  let s1 = document.createElement("div"); s1.className = "storeStones";
+  let s2 = document.createElement("div"); s2.className = "storeStones";
+
+  for(let i=0; i<board[7]; i++){
+    let stone = document.createElement("span"); stone.innerText = currentBeanSign; 
+    s1.appendChild(stone);
+  }
+  for(let i=0; i<board[15]; i++){
+    let stone = document.createElement("span"); stone.innerText = currentBeanSign; 
+    s2.appendChild(stone);
+  }
+
+  store1.appendChild(s1); store2.appendChild(s2);
+}
+
+function updateTurn(){ 
+  const turnText = document.getElementById("turnText");
+  if(turnText) turnText.innerText = playerTurn == 1 ? "Player 1" : "Player 2"; 
+}
+
+function checkWin(){
+  let p1 = board.slice(0,7).reduce((a,b)=>a+b,0);
+  let p2 = board.slice(8,15).reduce((a,b)=>a+b,0);
+  if(p1 == 0 || p2 == 0){
+    let winner = board[7] > board[15] ? 1 : 2;
+    endGame(winner);
+  }
+}
+
+function celebrateWin(){
+  const emojis = ["🎉","✨","🥳","💖","🌟","🎊"];
+  for(let i=0; i<25; i++){
+      let e = document.createElement("div");
+      e.className = "celebrate";
+      e.innerText = emojis[Math.floor(Math.random()*emojis.length)];
+      e.style.position = "fixed";
+      e.style.left = Math.random()*100 + "vw";
+      e.style.top = "-50px";
+      e.style.zIndex = "9999";
+      e.style.pointerEvents = "none";
+      e.style.animation = "fall 2.5s linear forwards";
+      e.style.animationDelay = Math.random()*0.5 + "s";
+      e.style.fontSize = (24 + Math.random()*20) + "px";
+      document.body.appendChild(e);
+      setTimeout(() => e.remove(), 2600);
+  }
+}
+
+function endGame(winner){
+  gamesPlayed++; 
+  if(winner == 1){
+    coins += (bet * 2); 
+    level++;
+    leaderboard.push({lvl: level, coins: coins, user: currentUser});
+    celebrateWin();
+    setTimeout(() => {
+      alert("🎉 You WIN! +Coins & Level Up!");
+    }, 300);
+  } else {
+    coins -= bet;
+    alert("💀 You lost!");
+  }
+  leaderboard.sort((a,b) => b.lvl - a.lvl);
+  leaderboard = leaderboard.slice(0,5);
+  save(); 
+  refreshUI();
+}
+
+function getPos(el){
+  if (!el) return {x: 0, y: 0};
+  let r = el.getBoundingClientRect();
+  return {x: r.left + r.width/2, y: r.top + r.height/2};
+}
+
+function animateStone(fromIndex, toIndex){
+  return new Promise(resolve => {
+      let fromEl = document.getElementById("hole" + fromIndex) || (fromIndex == 7 ? document.getElementById("store1") : document.getElementById("store2"));
+      let toEl   = document.getElementById("hole" + toIndex) || (toIndex == 7 ? document.getElementById("store1") : document.getElementById("store2"));
+
+      let start = getPos(fromEl);
+      let end   = getPos(toEl);
+
+      let stone = document.createElement("div");
+      stone.className = "flyingStone";
+      stone.innerText = currentBeanSign; 
+      stone.style.position = "fixed";
+      stone.style.left = start.x + "px";
+      stone.style.top = start.y + "px";
+      stone.style.zIndex = "1000";
+      stone.style.transition = "transform 0.5s ease";
+
+      document.body.appendChild(stone);
+
+      setTimeout(() => {
+          stone.style.transform = `translate(${end.x - start.x}px, ${end.y - start.y}px)`;
+      }, 20);
+
+      setTimeout(() => {
+          stone.remove();
+          resolve();
+      }, 550); 
+  });
+}
+
+function pause(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+async function move(i) {
+  if (playerTurn == 1 && i > 6) return;
+  if (playerTurn == 2 && i < 8) return;
+  if (board[i] == 0) return;
+
+  let current = i;
+  let stones = board[current];
+  board[current] = 0;
+  drawBoard(); updateStores();
+
+  while (stones > 0) {
+    let nextHole = (current + 1) % 16;
+
+    if (playerTurn == 1 && nextHole === 15) nextHole = 0; 
+    if (playerTurn == 2 && nextHole === 7) nextHole = 8;   
+
+    await animateStone(current, nextHole); 
+    
+    current = nextHole;
+    board[current]++;
+    stones--;
+    drawBoard(); updateStores();
+
+    if (stones === 0 && current !== 7 && current !== 15 && board[current] > 1) {
+      await pause(1000); 
+      stones = board[current];
+      board[current] = 0;
+      drawBoard(); updateStores();
+    }
+  }
+
+  let nextTurn = playerTurn == 1 ? 2 : 1;
+
+  if ((playerTurn == 1 && current === 7) || (playerTurn == 2 && current === 15)) {
+    nextTurn = playerTurn; 
+    alert("🔥 Extra Turn!");
+  } 
+  else if (board[current] === 1) { 
+    let onPlayer1Side = (current >= 0 && current <= 6);
+    let onPlayer2Side = (current >= 8 && current <= 14);
+
+    if (playerTurn == 1 && onPlayer1Side) {
+      let oppositeIndex = 14 - current;
+      if (board[oppositeIndex] > 0) {
+        board[7] += board[oppositeIndex] + 1;
+        board[current] = 0;
+        board[oppositeIndex] = 0;
+        alert("😎 Capture Move!");
+      }
+    } else if (playerTurn == 2 && onPlayer2Side) {
+      let oppositeIndex = 14 - current;
+      if (board[oppositeIndex] > 0) {
+        board[15] += board[oppositeIndex] + 1;
+        board[current] = 0;
+        board[oppositeIndex] = 0;
+        alert("😎 Capture Move!");
+      }
+    }
+  }
+
+  playerTurn = nextTurn;
+  drawBoard(); updateStores(); updateTurn();
+  checkWin();
+
+  if (vsAI && playerTurn == 2) setTimeout(aiMove, 600);
+}
+
+function aiMove(){
+  let c = [8,9,10,11,12,13,14].filter(i => board[i] > 0);
+  if(c.length > 0) {
+    move(c[Math.floor(Math.random() * c.length)]);
+  }
+}
+
+function showPopup(text){
+  const popup = document.getElementById("popup");
+  if(popup) {
+    popup.style.display = "block"; 
+    popup.innerHTML = text + "<br><br><button onclick='document.getElementById(\"popup\").style.display=\"none\"'>Close</button>";
+  }
+}
+
+function showHow(){ showPopup(`<h3>📖 How To Play</h3>...`); }
+function showTips(){ showPopup(`<h3>🧠 Strategy Guide</h3>...`); }
+function showBoard(){ showPopup(`<h3>🌍 Global Leaderboard</h3>...`); }
+
+// Initialize Game Session Lifecycle
+newGame();
+refreshUI();
+
+function donate(){ alert("Thank you! (Coming soon)"); }
+function showHelp(){ showPopup(`<h3>Help Center</h3>...`); }
+function refreshGame(){ location.reload(); }
+
+function resetProgress(){
+  if(confirm("Reset progress for THIS user profile? All items and balances will return to defaults.")){
+      localStorage.setItem(userPrefix + "level", "1");
+      localStorage.setItem(userPrefix + "coins", "3000");
+      localStorage.setItem(userPrefix + "gamesPlayed", "0");
+      localStorage.setItem(userPrefix + "lessonsCompleted", "0");
+      
+      localStorage.setItem("coins", "3000");
+      localStorage.setItem("level", "1");
+      localStorage.setItem("lessonsCompleted", "0");
+      localStorage.setItem("gamesPlayed", "0");
+
+      location.reload();
+  }
+}
+
+const navItems = document.querySelectorAll(".nav-item");
+navItems.forEach(item => {
+  item.addEventListener("click", function(e){
+    const ripple = document.createElement("span");
+    ripple.classList.add("ripple");
+    const rect = item.getBoundingClientRect();
+    ripple.style.left = e.clientX - rect.left + "px";
+    ripple.style.top = e.clientY - rect.top + "px";
+    item.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  });
+});
+</script>
+</body>
+</html>
